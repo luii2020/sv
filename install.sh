@@ -5,25 +5,23 @@ apt update
 apt install -y wget xz-utils ca-certificates 
 apt install curl
 
-# Fetch the latest version of Shadowsocks-Rust
-SS_VERSION=$(curl --silent "https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v(.*)".*/\1/')
-SS_URL="https://github.com/shadowsocks/shadowsocks-rust/releases/download/v$SS_VERSION/shadowsocks-v$SS_VERSION.x86_64-unknown-linux-gnu.tar.xz"
+# Determine latest version of shadowsocks-rust and v2ray-plugin
+SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+VP_VER=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest | grep "tag_name" | cut -d '"' -f 4)
 
-# Fetch the latest version of v2ray-plugin
-VP_VERSION=$(curl --silent "https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v(.*)".*/\1/')
-VP_URL="https://github.com/teddysun/v2ray-plugin/releases/download/v$VP_VERSION/v2ray-plugin-linux-amd64-v$VP_VERSION.tar.gz"
-
-
-
+# Download and extract shadowsocks-rust
 cd /usr/local/bin/
-wget "$SS_URL"
-wget "$VP_URL"
-xz -d shadowsocks-v$SS_VERSION.x86_64-unknown-linux-gnu.tar.xz
-tar -xf shadowsocks-v$SS_VERSION.x86_64-unknown-linux-gnu.tar
-tar -zxf v2ray-plugin-linux-amd64-v$VP_VERSION.tar.gz
-mv v2ray-plugin_linux_amd64 v2ray-plugin
-chown root.root ./ss* ./v2ray-plugin
-mkdir -p /usr/local/etc/shadowsocks-rust
+wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SS_VER/shadowsocks-v$SS_VER.x86_64-unknown-linux-gnu.tar.xz
+xz -d shadowsocks-v$SS_VER.x86_64-unknown-linux-gnu.tar.xz
+tar -xf shadowsocks-v$SS_VER.x86_64-unknown-linux-gnu.tar
+
+# Download and extract v2ray-plugin
+wget https://github.com/teddysun/v2ray-plugin/releases/download/$VP_VER/v2ray-plugin-linux-amd64-$VP_VER.tar.gz
+tar -zxf v2ray-plugin-linux-amd64-$VP_VER.tar.gz
+mv v2ray-plugin_linux_amd64 /usr/local/bin/v2ray-plugin
+
+# Set permissions and create config file
+chown root:root /usr/local/bin/ss* /usr/local/bin/v2ray-plugin
 
 
 # 创建配置文件
