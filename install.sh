@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # 安装依赖
-apt install vim wget xz-utils ca-certificates -y 
+apt update
+apt install -y wget xz-utils ca-certificates 
 apt install curl
 
 # Fetch the latest version of Shadowsocks-Rust
