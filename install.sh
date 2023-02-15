@@ -11,7 +11,7 @@ VP_VER=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/lat
 
 # Download and extract shadowsocks-rust
 cd /usr/local/bin/
-wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SS_VER/shadowsocks-v$SS_VER.x86_64-unknown-linux-gnu.tar.xz
+wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SS_VER/shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz
 xz -d shadowsocks-v$SS_VER.x86_64-unknown-linux-gnu.tar.xz
 tar -xf shadowsocks-v$SS_VER.x86_64-unknown-linux-gnu.tar
 
