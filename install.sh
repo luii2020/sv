@@ -3,6 +3,7 @@
 # 安装依赖
 apt update
 apt install -y wget xz-utils ca-certificates 
+choice="y"
 apt install curl
 
 # Determine latest version of shadowsocks-rust and v2ray-plugin
