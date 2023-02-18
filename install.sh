@@ -1,20 +1,4 @@
 #!/bin/bash
-cd /usr/local/bin/
-# Check if shadowsocks-rust and v2ray-plugin are installed
-if command -v ssserver &> /dev/null && command -v v2ray-plugin &> /dev/null; then
-    echo "shadowsocks-rust and v2ray-plugin are already installed."
-    # Check if the installed versions are up to date
-    CURRENT_SS_VER=$(ssserver -V | awk '{print $2}')
-    CURRENT_VP_VER=$(v2ray-plugin --version | awk '{print $2}')
-    if [ "$CURRENT_SS_VER" = "$SS_VER" ] && [ "$CURRENT_VP_VER" = "$VP_VER" ]; then
-        echo "The installed versions are up to date."
-        exit
-    else
-        echo "The installed versions are not up to date. Updating..."
-        rm /usr/local/bin/ssserver
-        rm /usr/local/bin/v2ray-plugin
-    fi
-fi
 
 # 安装依赖
 apt update
@@ -31,12 +15,12 @@ cd /usr/local/bin/
 wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SS_VER/shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz
 xz -d shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz
 tar -xf shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
-#rm -f shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
+rm -f shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
 
 # Download and extract v2ray-plugin
 wget https://github.com/teddysun/v2ray-plugin/releases/download/$VP_VER/v2ray-plugin-linux-amd64-$VP_VER.tar.gz
 tar -zxf v2ray-plugin-linux-amd64-$VP_VER.tar.gz
-#rm -f v2ray-plugin-linux-amd64-$VP_VER.tar.gz
+rm -f v2ray-plugin-linux-amd64-$VP_VER.tar.gz
 mv v2ray-plugin_linux_amd64 /usr/local/bin/v2ray-plugin
 
 # Set permissions and create config file
