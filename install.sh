@@ -1,4 +1,19 @@
 #!/bin/bash
+# Check if shadowsocks-rust and v2ray-plugin are installed
+if command -v ssserver &> /dev/null && command -v v2ray-plugin &> /dev/null; then
+    echo "shadowsocks-rust and v2ray-plugin are already installed."
+    # Check if the installed versions are up to date
+    CURRENT_SS_VER=$(ssserver -V | awk '{print $2}')
+    CURRENT_VP_VER=$(v2ray-plugin --version | awk '{print $2}')
+    if [ "$CURRENT_SS_VER" = "$SS_VER" ] && [ "$CURRENT_VP_VER" = "$VP_VER" ]; then
+        echo "The installed versions are up to date."
+        exit
+    else
+        echo "The installed versions are not up to date. Updating..."
+        rm /usr/local/bin/ssserver
+        rm /usr/local/bin/v2ray-plugin
+    fi
+fi
 
 # 安装依赖
 apt update
