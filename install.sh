@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /usr/local/bin/
 # Check if shadowsocks-rust and v2ray-plugin are installed
 if command -v ssserver &> /dev/null && command -v v2ray-plugin &> /dev/null; then
     echo "shadowsocks-rust and v2ray-plugin are already installed."
