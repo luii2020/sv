@@ -30,12 +30,12 @@ cd /usr/local/bin/
 wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SS_VER/shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz
 xz -d shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz
 tar -xf shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
-rm -f shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
+#rm -f shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
 
 # Download and extract v2ray-plugin
 wget https://github.com/teddysun/v2ray-plugin/releases/download/$VP_VER/v2ray-plugin-linux-amd64-$VP_VER.tar.gz
 tar -zxf v2ray-plugin-linux-amd64-$VP_VER.tar.gz
-rm -f v2ray-plugin-linux-amd64-$VP_VER.tar.gz
+#rm -f v2ray-plugin-linux-amd64-$VP_VER.tar.gz
 mv v2ray-plugin_linux_amd64 /usr/local/bin/v2ray-plugin
 
 # Set permissions and create config file
