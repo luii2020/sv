@@ -8,7 +8,7 @@ SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/relea
 
 # 获取当前 ssserver 的版本号
 cd /usr/local/bin/ 
-CUR_VER=$(./ssserver -V | cut -d '"' -f 2)
+CUR_VER=$(./ssserver -V | cut -d '"' -f 4)
 
 # 比较版本号
 if [ "$CUR_VER" = "$SS_VER" ]; then
