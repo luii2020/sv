@@ -28,10 +28,13 @@ chown root:root /usr/local/bin/ss* /usr/local/bin/v2ray-plugin
 
 
 # 创建配置文件
-echo "请输入 server_port："
-read SERVER_PORT
-echo "请输入 password："
-read PASSWORD
+echo "请输入 server_port（默认值9711）：" 
+read SERVER_PORT 
+SERVER_PORT=${SERVER_PORT:-9711}
+echo "请输入 password（默认值diaodiaoni）：" 
+read PASSWORD 
+PASSWORD=${PASSWORD:-diaodiaoni}
+
 
 mkdir -p /usr/local/etc/shadowsocks-rust
 cat > /usr/local/etc/shadowsocks-rust/config.json << EOF
