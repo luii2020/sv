@@ -1,19 +1,38 @@
 #!/bin/bash 
 # 检查是否已安装 shadowsocks-rust 
-SS_VER=$(ssserver -V | grep "shadowsocks-rust" | cut -d " " -f 2)
-if [ -z "$SS_VER" ]; then
-    echo "Shadowsocks-Rust 未安装，开始安装..."
-else
-    echo "当前安装的 Shadowsocks-Rust 版本为 $SS_VER"
-    echo "检查最新版本..."
-    LATEST_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-    if [ "$LATEST_VER" == "$SS_VER" ]; then
-        echo "已安装最新版本"
-    else
-        echo "升级到最新版本 $LATEST_VER"
-   
-    fi
-fi
+check_installed_status(){
+	[[ ! -e ${FILE} ]] && echo -e "${Error} Shadowsocks Rust 没有安装，请检查！" && exit 1
+}
+
+check_status(){
+	status=`systemctl status ss-rust | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1`
+}
+
+check_new_ver(){
+	new_ver=$(wget -qO- https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases| jq -r '[.[] | select(.prerelease == false) | select(.draft == false) | .tag_name] | .[0]')
+	[[ -z ${new_ver} ]] && echo -e "${Error} Shadowsocks Rust 最新版本获取失败！" && exit 1
+	echo -e "${Info} 检测到 Shadowsocks Rust 最新版本为 [ ${new_ver} ]"
+}
+
+check_ver_comparison(){
+	now_ver=$(cat ${Now_ver_File})
+	if [[ "${now_ver}" != "${new_ver}" ]]; then
+		echo -e "${Info} 发现 Shadowsocks Rust 已有新版本 [ ${new_ver} ]，旧版本 [ ${now_ver} ]"
+		read -e -p "是否更新 ？ [Y/n]：" yn
+		[[ -z "${yn}" ]] && yn="y"
+		if [[ $yn == [Yy] ]]; then
+			check_status
+			# [[ "$status" == "running" ]] && systemctl stop ss-rust
+			\cp "${CONF}" "/tmp/config.json"
+			# rm -rf ${FOLDER}
+			Download
+			mv -f "/tmp/config.json" "${CONF}"
+			Restart
+		fi
+	else
+		echo -e "${Info} 当前 Shadowsocks Rust 已是最新版本 [ ${new_ver} ] ！" && exit 1
+	fi
+}
 
 # 安装依赖
 apt update
