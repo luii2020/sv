@@ -1,22 +1,6 @@
 #!/bin/bash
 
-# Check if shadowsocks-rust is installed
-if command -v ssserver &> /dev/null
-then
 
-# 获取 shadowsocks-rust 的最新版本号
-SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-
-# 获取 ssserver 的版本号，并与最新版本号进行比较
-if test "$(./ssserver -V | cut -d ' ' -f 2)" == "$SS_VER"; then
-  echo "ssserver is up to date."
-else
-  echo "ssserver is outdated."
-fi
-
-    echo "shadowsocks-rust is already installed"
-else
-    echo "Installing shadowsocks-rust"
     # Install dependencies
     apt update
     apt install -y wget xz-utils ca-certificates curl
