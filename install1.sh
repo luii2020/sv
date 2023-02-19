@@ -9,12 +9,12 @@ if [ -z "$SS_VER" ]; then
 else
     echo "当前安装的 Shadowsocks-Rust 版本为 $SS_VER"
     echo "检查最新版本..."
-    SSLATEST_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-    if [ "$SSLATEST_VER" == "$SS_VER" ]; then
+    LATEST_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+    if [ "$LATEST_VER" == "$SS_VER" ]; then
         echo "已安装最新版本"
     else
-        echo "升级到最新版本 $SSLATEST_VER"
-        SS_VER=$SSLATEST_VER
+        echo "升级到最新版本 $LATEST_VER"
+        SS_VER=$LATEST_VER
     fi
 fi
 # 检查是否已安装 v2ray-plugin 
