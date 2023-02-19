@@ -1,18 +1,20 @@
 #!/bin/bash 
-# Check if Shadowsocks-Rust is installed and up-to-date
-if [ -x "$(command -v shadowsocks-rust)" ]; then
-    INSTALLED_VERSION=$(shadowsocks-rust --version | cut -d " " -f 2)
-    if [ "$INSTALLED_VERSION" == "$SSR_VERSION" ]; then
-        echo "Shadowsocks-Rust is already installed and up-to-date."
-        exit 0
+# 检查是否已安装 shadowsocks-rust 
+SS_VER=$(ssserver -V | grep "shadowsocks-rust" | cut -d " " -f 2)
+if [ -z "$SS_VER" ]; then
+    echo "Shadowsocks-Rust 未安装，开始安装..."
+else
+    echo "当前安装的 Shadowsocks-Rust 版本为 $SS_VER"
+    echo "检查最新版本..."
+    LATEST_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+    if [ "$LATEST_VER" == "$SS_VER" ]; then
+        echo "已安装最新版本"
     else
-        echo "Updating Shadowsocks-Rust from version $INSTALLED_VERSION to version $SSR_VERSION."
-        # Remove old installation
-        rm /usr/local/bin/shadowsocks-rust
-        rm /usr/local/etc/shadowsocks-rust/config.json
-        rm /etc/systemd/system/shadowsocks-rust.service
+        echo "升级到最新版本 $LATEST_VER"
+   
     fi
 fi
+
 # 安装依赖
 apt update
 apt install -y wget xz-utils ca-certificates 
