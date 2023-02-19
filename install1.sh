@@ -67,4 +67,4 @@ EOF
     systemctl start shadowsocks-rust
 
     echo "shadowsocks-rust has been installed and started"
-fi
+
