@@ -92,3 +92,5 @@ systemctl daemon-reload
 systemctl start shadowsocks-rust
 systemctl enable shadowsocks-rust
 systemctl status shadowsocks-rust
+echo "shadowsocks-rust has been installed and started"
+fi
