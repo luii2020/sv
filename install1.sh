@@ -1,8 +1,5 @@
 #!/bin/bash
-# Check if shadowsocks-rust is installed
-if command -v ssserver &> /dev/null
-then
-# Stop and disable shadowsocks-rust service
+
 systemctl stop shadowsocks-rust
 systemctl disable shadowsocks-rust
 
@@ -19,8 +16,7 @@ rm -f /usr/local/etc/shadowsocks-rust/config.json
 rm -f /etc/systemd/system/shadowsocks-rust.service
 
 echo "shadowsocks-rust and v2ray-plugin have been removed successfully."
-else
-    echo "Installing shadowsocks-rust"
+
 
 # 安装依赖
 apt update
@@ -93,4 +89,4 @@ systemctl start shadowsocks-rust
 systemctl enable shadowsocks-rust
 systemctl status shadowsocks-rust
 
-fi
+
