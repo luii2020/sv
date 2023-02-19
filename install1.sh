@@ -2,9 +2,19 @@
 
 # Check if shadowsocks-rust is installed
 if command -v ssserver &> /dev/null
-
-    ./ssserver -V &= SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
 then
+    # 获取 shadowsocks-rust 的最新版本号
+SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+
+# 获取当前 ssserver 的版本号
+CUR_VER=$(./ssserver -V | cut -d ' ' -f 2)
+
+# 比较版本号
+if [ "$CUR_VER" = "$SS_VER" ]; then
+  echo "ssserver 版本号为最新版本：$CUR_VER"
+else
+  echo "ssserver 版本号不是最新版本，当前版本号为 $CUR_VER，最新版本号为 $SS_VER"
+fi
     echo "shadowsocks-rust is already installed"
 else
     echo "Installing shadowsocks-rust"
