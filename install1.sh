@@ -13,7 +13,7 @@ else
     if [ "$SSLATEST_VER" == "$SS_VER" ]; then
         echo "已安装最新版本"
     else
-        echo "升级到最新版本 $LATEST_VER"
+        echo "升级到最新版本 $SSLATEST_VER"
         SS_VER=$SSLATEST_VER
     fi
 fi
