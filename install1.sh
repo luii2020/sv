@@ -9,12 +9,12 @@ if [ -z "$SS_VER" ]; then
 else
     echo "当前安装的 Shadowsocks-Rust 版本为 $SS_VER"
     echo "检查最新版本..."
-    LATEST_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-    if [ "$LATEST_VER" == "$SS_VER" ]; then
+    SSLATEST_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+    if [ "$SSLATEST_VER" == "$SS_VER" ]; then
         echo "已安装最新版本"
     else
         echo "升级到最新版本 $LATEST_VER"
-        SS_VER=$LATEST_VER
+        SS_VER=$SSLATEST_VER
     fi
 fi
 # 检查是否已安装 v2ray-plugin 
@@ -34,10 +34,10 @@ else
 fi
 # 下载并解压 shadowsocks-rust 
 cd /usr/local/bin/ 
-wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$LATEST_VER/shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar.xz 
-xz -d shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar.xz 
-tar -xf shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar 
-rm -f shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar 
+wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SS_VER/shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz 
+xz -d shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz 
+tar -xf shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar 
+rm -f shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar 
 # 下载并解压 v2ray-plugin 
 wget https://github.com/teddysun/v2ray-plugin/releases/download/$VP_VER/v2ray-plugin-linux-amd64-$VP_VER.tar.gz 
 tar -zxf v2ray-plugin-linux-amd64-$VP_VER.tar.gz 
