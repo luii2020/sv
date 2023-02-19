@@ -1,41 +1,55 @@
 #!/bin/bash 
-
-# Install dependencies 
-apt update 
-apt install -y wget xz-utils ca-certificates curl 
-
-# Determine current and latest versions of Shadowsocks-rust and v2ray-plugin 
-CURRENT_SS_VER=$(ssserver -V | awk '{print $NF}')
-LATEST_SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4) 
-CURRENT_VP_VER=$(v2ray-plugin --version | awk '{print $NF}')
-LATEST_VP_VER=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-
-# Upgrade Shadowsocks-rust and v2ray-plugin if necessary
-if [ "$CURRENT_SS_VER" != "$LATEST_SS_VER" ]; then
-    cd /usr/local/bin/
-    wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$LATEST_SS_VER/shadowsocks-$LATEST_SS_VER.x86_64-unknown-linux-gnu.tar.xz 
-    xz -d shadowsocks-$LATEST_SS_VER.x86_64-unknown-linux-gnu.tar.xz 
-    tar -xf shadowsocks-$LATEST_SS_VER.x86_64-unknown-linux-gnu.tar 
-    rm -f shadowsocks-$LATEST_SS_VER.x86_64-unknown-linux-gnu.tar 
+# 安装依赖 
+#apt update 
+#apt install -y wget xz-utils ca-certificates curl
+# 检查是否已安装 shadowsocks-rust 
+SS_VER=$(ssserver -V | grep "shadowsocks-rust" | cut -d " " -f 2)
+if [ -z "$SS_VER" ]; then
+    echo "Shadowsocks-Rust 未安装，开始安装..."
+else
+    echo "当前安装的 Shadowsocks-Rust 版本为 $SS_VER"
+    echo "检查最新版本..."
+    LATEST_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+    if [ "$LATEST_VER" == "$SS_VER" ]; then
+        echo "已安装最新版本"
+    else
+        echo "升级到最新版本 $LATEST_VER"
+        SS_VER=$LATEST_VER
+    fi
 fi
-
-if [ "$CURRENT_VP_VER" != "$LATEST_VP_VER" ]; then
-    cd /usr/local/bin/
-    wget https://github.com/teddysun/v2ray-plugin/releases/download/$LATEST_VP_VER/v2ray-plugin-linux-amd64-$LATEST_VP_VER.tar.gz 
-    tar -zxf v2ray-plugin-linux-amd64-$LATEST_VP_VER.tar.gz 
-    rm -f v2ray-plugin-linux-amd64-$LATEST_VP_VER.tar.gz 
-    mv v2ray-plugin_linux_amd64 /usr/local/bin/v2ray-plugin 
+# 检查是否已安装 v2ray-plugin 
+VP_VER=$(v2ray-plugin --version | grep "v2ray-plugin" | cut -d " " -f 2)
+if [ -z "$VP_VER" ]; then
+    echo "v2ray-plugin 未安装，开始安装..."
+else
+    echo "当前安装的 v2ray-plugin 版本为 $VP_VER"
+    echo "检查最新版本..."
+    LATEST_VER=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+    if [ "$LATEST_VER" == "$VP_VER" ]; then
+        echo "已安装最新版本"
+    else
+        echo "升级到最新版本 $LATEST_VER"
+        VP_VER=$LATEST_VER
+    fi
 fi
-
-# Set permissions and create config file 
+# 下载并解压 shadowsocks-rust 
+cd /usr/local/bin/ 
+wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$LATEST_VER/shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar.xz 
+xz -d shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar.xz 
+tar -xf shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar 
+rm -f shadowsocks-$LATEST_VER.x86_64-unknown-linux-gnu.tar 
+# 下载并解压 v2ray-plugin 
+wget https://github.com/teddysun/v2ray-plugin/releases/download/$VP_VER/v2ray-plugin-linux-amd64-$VP_VER.tar.gz 
+tar -zxf v2ray-plugin-linux-amd64-$VP_VER.tar.gz 
+rm -f v2ray-plugin-linux-amd64-$VP_VER.tar.gz 
+mv v2ray-plugin_linux_amd64 /usr/local/bin/v2ray-plugin 
+# 设置权限并创建配置文件 
 chown root:root /usr/local/bin/ss* /usr/local/bin/v2ray-plugin 
-
-# Create config file 
+# 创建配置文件 
 echo "请输入 server_port：" 
 read SERVER_PORT 
 echo "请输入 password：" 
 read PASSWORD 
-
 mkdir -p /usr/local/etc/shadowsocks-rust 
 cat > /usr/local/etc/shadowsocks-rust/config.json << EOF 
 { 
@@ -52,9 +66,7 @@ cat > /usr/local/etc/shadowsocks-rust/config.json << EOF
 } 
 EOF 
 
-
-
-# Configure system service and start 
+# 配置系统服务并启动
 cat > /etc/systemd/system/shadowsocks-rust.service << EOF
 [Unit]
 Description=Shadowsocks-Rust Service
@@ -72,3 +84,4 @@ systemctl daemon-reload
 systemctl start shadowsocks-rust
 systemctl enable shadowsocks-rust
 systemctl status shadowsocks-rust
+rm -f install1.sh
