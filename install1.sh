@@ -3,6 +3,7 @@
 # Check if shadowsocks-rust is installed
 if command -v ssserver &> /dev/null
 then
+    ./ssserver -V &= SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
     echo "shadowsocks-rust is already installed"
 else
     echo "Installing shadowsocks-rust"
