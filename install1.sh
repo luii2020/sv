@@ -25,8 +25,8 @@ choice="y"
 apt install curl
 
 # Determine latest version of shadowsocks-rust and v2ray-plugin
-SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-VP_VER=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/tag | grep "tag_name" | cut -d '"' -f 4)
+VP_VER=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/tag | grep "tag_name" | cut -d '"' -f 4)
 
 # Download and extract shadowsocks-rust
 cd /usr/local/bin/
