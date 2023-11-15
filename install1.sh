@@ -1,92 +1,76 @@
 #!/bin/bash
 
-systemctl stop shadowsocks-rust
-systemctl disable shadowsocks-rust
+# 检查是否已安装 Shadowsocks-Rust 和 v2ray-plugin
+SSRUST_VERSION_INSTALLED=$(ssserver --version | grep -oE "v[0-9]+\.[0-9]+\.[0-9]+")
+VP_VERSION_INSTALLED=$(v2ray-plugin --version | grep -oE "v[0-9]+\.[0-9]+\.[0-9]+")
 
-# Remove shadowsocks-rust and v2ray-plugin executables
-rm -f /usr/local/bin/sslocal
-rm -f /usr/local/bin/ssmanager
-rm -f /usr/local/bin/ssserver
-rm -f /usr/local/bin/v2ray-plugin
+# 获取最新版本
+SSRUST_VERSION=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}')
+VP_VERSION=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}')
 
-# Remove shadowsocks-rust config file
-rm -f /usr/local/etc/shadowsocks-rust/config.json
+# 检查是否已安装最新版本
+if [ "$SSRUST_VERSION_INSTALLED" != "$SSRUST_VERSION" ] || [ "$VP_VERSION_INSTALLED" != "$VP_VERSION" ]; then
+    # 安装必要的软件
+    apt update
+    apt install -y vim wget xz-utils ca-certificates
 
-# Remove shadowsocks-rust service file
-rm -f /etc/systemd/system/shadowsocks-rust.service
+    # 下载并解压最新版本的 Shadowsocks-Rust 和 v2ray-plugin
+    wget "https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SSRUST_VERSION/shadowsocks-v$SSRUST_VERSION.x86_64-unknown-linux-gnu.tar.xz"
+    wget "https://github.com/teddysun/v2ray-plugin/releases/download/$VP_VERSION/v2ray-plugin-linux-amd64-$VP_VERSION.tar.gz"
 
-echo "shadowsocks-rust and v2ray-plugin have been removed successfully."
+    tar -xf "shadowsocks-v$SSRUST_VERSION.x86_64-unknown-linux-gnu.tar.xz"
+    tar -zxf "v2ray-plugin-linux-amd64-$VP_VERSION.tar.gz"
+    mv "v2ray-plugin_linux_amd64" /usr/local/bin/v2ray-plugin
 
+    # 获取用户输入的密码和端口号
+    read -p "请输入密码（默认diaodiaoni）: " PASSWORD
+    PASSWORD=${PASSWORD:-diaodiaoni}
+    read -p "请输入端口号（默认7900）: " PORT
+    PORT=${PORT:-7900}
 
-# 安装依赖
-apt update
-apt install -y wget xz-utils ca-certificates 
-choice="y"
-apt install curl
-
-# Determine latest version of shadowsocks-rust and v2ray-plugin
-SS_VER=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-VP_VER=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-
-# Download and extract shadowsocks-rust
-cd /usr/local/bin/
-wget https://github.com/shadowsocks/shadowsocks-rust/releases/download/$SS_VER/shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz
-xz -d shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar.xz
-tar -xf shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
-rm -f shadowsocks-$SS_VER.x86_64-unknown-linux-gnu.tar
-
-# Download and extract v2ray-plugin
-wget https://github.com/teddysun/v2ray-plugin/releases/download/$VP_VER/v2ray-plugin-linux-amd64-$VP_VER.tar.gz
-tar -zxf v2ray-plugin-linux-amd64-$VP_VER.tar.gz
-rm -f v2ray-plugin-linux-amd64-$VP_VER.tar.gz
-mv v2ray-plugin_linux_amd64 /usr/local/bin/v2ray-plugin
-
-# Set permissions and create config file
-chown root:root /usr/local/bin/ss* /usr/local/bin/v2ray-plugin
-
-
-# 创建配置文件
-echo "请输入 server_port（默认值9711）：" 
-read SERVER_PORT 
-SERVER_PORT=${SERVER_PORT:-9711}
-echo "请输入 password（默认值diaodiaoni）：" 
-read PASSWORD 
-PASSWORD=${PASSWORD:-diaodiaoni}
-
-
-mkdir -p /usr/local/etc/shadowsocks-rust
-cat > /usr/local/etc/shadowsocks-rust/config.json << EOF
-{
-    "server": "0.0.0.0",
-    "server_port": $SERVER_PORT,
-    "method": "aes-256-gcm",
-    "timeout": 300,
-    "password": "$PASSWORD",
-    "fast_open": false,
-    "nameserver": "8.8.8.8",
-    "mode": "tcp_only",
-    "plugin": "v2ray-plugin",
-    "plugin_opts": "server"
-}
+    # 创建配置文件
+    mkdir -p /usr/local/etc/shadowsocks-rust
+    cat > /usr/local/etc/shadowsocks-rust/config.json << EOF
+    {
+        "server":"0.0.0.0",
+        "server_port":$PORT,
+        "method":"aes-256-gcm",
+        "timeout":300,
+        "password":"$PASSWORD",
+        "fast_open":false,
+        "nameserver":"8.8.8.8",
+        "mode":"tcp_only",
+        "plugin":"v2ray-plugin",
+        "plugin_opts":"server"
+    }
 EOF
 
-# 配置系统服务并启动
-cat > /etc/systemd/system/shadowsocks-rust.service << EOF
-[Unit]
-Description=Shadowsocks-Rust Service
-After=network.target
-[Service]
-Type=simple
-User=nobody
-Group=nogroup
-StandardOutput=null
-ExecStart=/usr/local/bin/ssserver -c /usr/local/etc/shadowsocks-rust/config.json
-[Install]
-WantedBy=multi-user.target
+    # 创建 systemd 服务
+    cat > /etc/systemd/system/shadowsocks-rust.service << EOF
+    [Unit]
+    Description=Shadowsocks-Rust Service
+    After=network.target
+
+    [Service]
+    Type=simple
+    User=nobody
+    Group=nogroup
+    StandardOutput=null
+    ExecStart=/usr/local/bin/ssserver -c /usr/local/etc/shadowsocks-rust/config.json
+
+    [Install]
+    WantedBy=multi-user.target
 EOF
-systemctl daemon-reload
-systemctl start shadowsocks-rust
-systemctl enable shadowsocks-rust
-systemctl status shadowsocks-rust
 
+    # 启动服务并设置开机自启
+    systemctl daemon-reload
+    systemctl start shadowsocks-rust
+    systemctl enable shadowsocks-rust
+    systemctl status shadowsocks-rust
 
+    # 列出最新版本号
+    echo "Shadowsocks-Rust 最新版本号：$SSRUST_VERSION"
+    echo "v2ray-plugin 最新版本号：$VP_VERSION"
+else
+    echo "已安装最新版本，无需更新。"
+fi
