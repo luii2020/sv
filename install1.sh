@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# 检查是否已安装 Shadowsocks-Rust 和 v2ray-plugin
-SSRUST_VERSION_INSTALLED=$(ssserver --version | grep -oE "v[0-9]+\.[0-9]+\.[0-9]+")
-VP_VERSION_INSTALLED=$(v2ray-plugin --version | grep -oE "v[0-9]+\.[0-9]+\.[0-9]+")
+# 获取当前安装的版本号
+SSRUST_VERSION_INSTALLED=$(ssserver --version 2>/dev/null | grep -oE "v[0-9]+\.[0-9]+\.[0-9]+")
+VP_VERSION_INSTALLED=$(v2ray-plugin --version 2>/dev/null | grep -oE "v[0-9]+\.[0-9]+\.[0-9]+")
 
-# 获取最新版本
+# 获取最新版本号
 SSRUST_VERSION=$(curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}')
 VP_VERSION=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}')
 
@@ -73,4 +73,6 @@ EOF
     echo "v2ray-plugin 最新版本号：$VP_VERSION"
 else
     echo "已安装最新版本，无需更新。"
+    echo "Shadowsocks-Rust 当前版本号：$SSRUST_VERSION_INSTALLED"
+    echo "v2ray-plugin 当前版本号：$VP_VERSION_INSTALLED"
 fi
