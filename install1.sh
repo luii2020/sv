@@ -10,6 +10,7 @@ VP_VERSION=$(curl -s https://api.github.com/repos/teddysun/v2ray-plugin/releases
 
 # 检查是否已安装最新版本
 if [ "$SSRUST_VERSION_INSTALLED" != "$SSRUST_VERSION" ] || [ "$VP_VERSION_INSTALLED" != "$VP_VERSION" ]; then
+    # 如果需要更新，则执行下载和安装的步骤
     # 安装必要的软件
     apt update
     apt install -y vim wget xz-utils ca-certificates
