@@ -46,7 +46,6 @@ After=network.target
 [Service]
 Type=simple
 User=root
-Group=nogroup
 WorkingDirectory=/root
 ExecStart=/root/AKTV_NODE-linux -c /root/config.json
 Restart=on-failure
