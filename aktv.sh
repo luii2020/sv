@@ -64,3 +64,6 @@ systemctl enable aktv.service
 
 # 显示服务状态
 systemctl status aktv.service
+
+# 输出访问链接
+echo "AKTV Node 服务已启动，访问链接: http://$IP_ADDRESS:$PORT/live.m3u"
