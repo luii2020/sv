@@ -65,7 +65,6 @@ cat <<EOF > $CONFIG_FILE
             "$DEST"   # 不包含端口号
           ],
           "privateKey": "$PRIVATE_KEY",
-          "minClientVer": "1.8.10",
           "shortIds": [
             "$SHORT_IDS"
           ]
