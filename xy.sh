@@ -6,9 +6,27 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
-# 安装 Xray
-echo "正在安装 Xray ..."
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install --version 1.8.23
+# 检查是否已安装 Xray，并获取当前版本
+installed_version=$(xray -v 2>/dev/null)
+
+# 如果 Xray 已安装，则检查版本是否为最新版
+latest_version=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | jq -r .tag_name)
+
+if [ "$installed_version" ]; then
+    echo "当前安装的 Xray 版本: $installed_version"
+    echo "最新 Xray 版本: $latest_version"
+    
+    # 如果当前版本不是最新版，则进行升级
+    if [ "$installed_version" != "$latest_version" ]; then
+        echo "Xray 不是最新版，正在升级到最新版..."
+        bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install --version $latest_version
+    else
+        echo "Xray 已经是最新版，无需升级。"
+    fi
+else
+    echo "Xray 未安装，正在安装最新版..."
+    bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install --version $latest_version
+fi
 
 # 生成 UUID
 UUID=$(xray uuid)
@@ -65,6 +83,7 @@ cat <<EOF > $CONFIG_FILE
             "$DEST"   # 不包含端口号
           ],
           "privateKey": "$PRIVATE_KEY",
+          "minClientVer": "1.8.10",
           "shortIds": [
             "$SHORT_IDS"
           ]
