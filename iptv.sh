@@ -39,29 +39,24 @@ valid_links = []
 
 # 步骤 1: 获取网页内容并提取链接
 def fetch_ipvtv_links():
-    url = "http://tonkiang.us/"
+    url = "http://tonkiang.us/?page=1&iptv=%E7%BF%A1%E7%BF%A0%E5%8F%B0"
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()  # 确保请求成功
-        logging.info("Successfully fetched the webpage content.")
-        
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # 输出网页的部分内容，帮助调试
-        logging.debug("Webpage content preview: {}".format(response.text[:500]))  # 打印网页的前500个字符
-        
+
         # 假设链接包含在特定的标签中
         links = soup.find_all('a', href=True)
-        
+
         # 从这些链接中筛选出符合“翡翠台”的链接
         iptv_links = []
         for link in links:
-            if '翡翠台' in link.text:  # 只过滤包含“翡翠台”的链接，不再检查“fast”
+            if '翡翠台' in link.text:
                 iptv_links.append(link['href'])
-        
+
         logging.info("Found {} links.".format(len(iptv_links)))
         return iptv_links
-    
+
     except requests.RequestException as e:
         logging.error("Error fetching links: {}".format(str(e)))
         return []
