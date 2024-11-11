@@ -153,7 +153,7 @@ echo "Configuring Nginx..."
 # 创建 Nginx 配置文件
 cat > /etc/nginx/sites-available/default <<EOF
 server {
-    listen 80;
+    listen 8080;
 
     # 设置服务器的 root 路径
     root /var/www/html;
@@ -178,4 +178,4 @@ systemctl reload nginx
 
 # 提供访问链接
 SERVER_IP=$(hostname -I | awk '{print $1}')
-echo "Server setup completed. You can access your M3U8 file at http://$SERVER_IP:80/hk.m3u8"
+echo "Server setup completed. You can access your M3U8 file at http://$SERVER_IP:8080/hk.m3u8"
