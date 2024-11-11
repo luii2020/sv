@@ -2,8 +2,8 @@
 
 # 更新并安装必要的软件包
 echo "Updating and installing dependencies..."
-sudo apt update
-sudo apt install -y python3 python3-pip nginx ffmpeg
+apt update
+apt install -y python3 python3-pip nginx ffmpeg
 
 # 安装 Python 所需的库
 echo "Installing Python libraries..."
@@ -174,7 +174,7 @@ server {
 EOF
 
 # 重启 Nginx 服务使配置生效
-sudo systemctl reload nginx
+systemctl reload nginx
 
 # 提供访问链接
 SERVER_IP=$(hostname -I | awk '{print $1}')
