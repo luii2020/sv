@@ -54,7 +54,7 @@ def fetch_ipvtv_links():
             if '翡翠台' in link.text and 'fast' in link.text:
                 iptv_links.append(link['href'])
 
-        logging.info(f"Found {len(iptv_links)} links.")
+        logging.info("Found {} links.".format(len(iptv_links)))
         return iptv_links
     
     except requests.RequestException as e:
