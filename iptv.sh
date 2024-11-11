@@ -75,7 +75,7 @@ def test_link_speed(link):
         # 如果没有错误输出，说明流是有效的
         if result.returncode == 0:
             duration = end_time - start_time
-            logging.info(f"Valid stream: {link} | Time: {duration} seconds")
+            logging.info("Valid stream: {} | Time: {} seconds".format(link, duration))
             return (duration, link)
         else:
             logging.warning(f"Invalid stream: {link}")
