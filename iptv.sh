@@ -78,7 +78,7 @@ def test_link_speed(link):
             logging.info("Valid stream: {} | Time: {} seconds".format(link, duration))
             return (duration, link)
         else:
-            logging.warning(f"Invalid stream: {link}")
+            logging.warning("Invalid stream: {}".format(link))
             return None
     except Exception as e:
         logging.error(f"Error validating link {link}: {str(e)}")
