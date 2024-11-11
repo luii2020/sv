@@ -143,9 +143,9 @@ if __name__ == '__main__':
     schedule_task()
 EOF
 
-# 启动 Python 脚本
+# 启动 Python 脚本并记录日志
 echo "Starting the IPTV script..."
-python3 /var/www/html/iptv/iptv_script.py &
+nohup python3 /var/www/html/iptv/iptv_script.py > /var/log/iptv_script.log 2>&1 &
 
 # 配置 Nginx 以提供 M3U8 文件访问
 echo "Configuring Nginx..."
