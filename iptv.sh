@@ -58,7 +58,7 @@ def fetch_ipvtv_links():
         return iptv_links
     
     except requests.RequestException as e:
-        logging.error(f"Error fetching links: {str(e)}")
+        logging.error("Error fetching links: {}".format(str(e)))
         return []
 
 # 步骤 2: 测试每个链接的速度，并返回下载时间
