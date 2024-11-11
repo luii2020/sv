@@ -81,7 +81,7 @@ def test_link_speed(link):
             logging.warning("Invalid stream: {}".format(link))
             return None
     except Exception as e:
-        logging.error(f"Error validating link {link}: {str(e)}")
+        logging.error("Error validating link {}: {}".format(link, str(e)))
         return None
 
 # 步骤 3: 生成M3U8文件并输出具体的订阅链接
@@ -89,14 +89,14 @@ def generate_m3u8_file(valid_links):
     m3u8_content = "#EXTM3U\n"
     for link in valid_links:
         # 在 M3U8 中添加详细描述信息
-        m3u8_content += f"#EXTINF:-1, {link}\n{link}\n"
+        m3u8_content += "#EXTINF:-1, {0}\n{0}\n".format(link)
 
     # 输出M3U8文件到 /var/www/html 目录
     m3u8_path = '/var/www/html/hk.m3u8'
     with open(m3u8_path, 'w') as file:
         file.write(m3u8_content)
     
-    logging.info(f"M3U8 file generated with {len(valid_links)} valid links at {m3u8_path}.")
+    logging.info("M3U8 file generated with {} valid links at {}.".format(len(valid_links), m3u8_path))
 
 # 步骤 4: 过滤链接，确保链接只保留48小时内的，最多5条
 def filter_and_sort_links(links_with_times):
