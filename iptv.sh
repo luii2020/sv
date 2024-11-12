@@ -22,9 +22,8 @@ from bs4 import BeautifulSoup
 url = "http://tonkiang.us/"
 search_query = "翡翠台"
 
-# 模拟 POST 请求进行搜索
-# 假设搜索表单字段为 'q'，需要根据实际情况调整
-data = {'q': search_query}
+# 模拟 POST 请求进行搜索，表单字段为 'seerch'
+data = {'seerch': search_query}
 response = requests.post(url, data=data)
 
 # 确保请求成功
@@ -54,6 +53,7 @@ if response.status_code == 200:
         print("\n没有找到与 '翡翠台' 相关的链接。")
 else:
     print("请求失败，状态码：{}".format(response.status_code))
+
 
 EOF
 
