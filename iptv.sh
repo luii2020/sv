@@ -43,26 +43,26 @@ try:
     # 遍历分页（假设有多页）
     page_num = 1
     while True:
-        print("正在抓取第 {} 页...".format(page_num))
-        
+        print("正在抓取第 {} 页...".format(page_num))  # 使用 .format()
+
         # 获取页面中的所有链接
         links = driver.find_elements(By.TAG_NAME, 'a')
         found_links = []
-        
+
         for link in links:
             href = link.get_attribute('href')
             text = link.text
             # 如果链接文本包含 "翡翠台"
             if href and "翡翠台" in text:
                 found_links.append(href)
-        
+
         if found_links:
             print("找到以下与 '翡翠台' 相关的链接：")
             for link in found_links:
                 print(link)
         else:
-            print("在第 {} 页没有找到 '翡翠台' 相关链接。".format(page_num))
-        
+            print("在第 {} 页没有找到 '翡翠台' 相关链接。".format(page_num))  # 使用 .format()
+
         # 判断是否有下一页
         try:
             next_page_link = driver.find_element(By.LINK_TEXT, str(page_num + 1))
@@ -73,7 +73,7 @@ try:
             print("没有更多页面了，抓取完成。")
             break
 except Exception as e:
-    print("发生错误: {}".format(e))
+    print("发生错误: {}".format(e))  # 使用 .format()
 finally:
     # 关闭浏览器
     driver.quit()
