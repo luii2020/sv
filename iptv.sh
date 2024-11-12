@@ -26,20 +26,24 @@ response = requests.get(url)
 
 # 确保请求成功
 if response.status_code == 200:
+    # 输出网页的前1000个字符，查看网页的 HTML 内容
+    print("网页内容的前1000个字符：")
+    print(response.text[:1000])
+
     # 解析网页
     soup = BeautifulSoup(response.text, 'html.parser')
 
     # 查找所有 <a> 标签（超链接）
     links = soup.find_all('a')
 
-    # 输出所有链接和链接内容（调试输出）
-    print("所有链接：")
+    # 输出所有链接和链接文本
+    print("\n所有链接：")
     for link in links:
         href = link.get('href')
         link_text = link.get_text()
-        print("链接文本: {}, 链接地址: {}".format(link_text, href))
+        print("链接文本: {}, 链接地址: {}".format(link_text.strip(), href))
 
-    # 查找与 '翡翠台' 相关的链接
+    # 查找与 '翡翠台' 相关的链接（使用更宽松的匹配）
     related_links = [link.get('href') for link in links if link.get_text() and "翡翠台" in link.get_text()]
 
     # 输出找到的相关链接
@@ -51,6 +55,7 @@ if response.status_code == 200:
         print("\n没有找到与 '翡翠台' 相关的链接。")
 else:
     print("请求失败，状态码：{}".format(response.status_code))
+
 
 EOF
 
