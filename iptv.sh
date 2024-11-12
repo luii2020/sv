@@ -18,18 +18,16 @@ cat << 'EOF' > fetch_favorite_channel.py
 import requests
 from bs4 import BeautifulSoup
 
-# 网页URL
+# 搜索引擎 URL 和要搜索的关键字
 url = "http://tonkiang.us/"
+search_query = "翡翠台"
 
-# 发送HTTP GET请求获取网页内容
-response = requests.get(url)
+# 发送 GET 请求进行搜索（假设搜索参数为 'q'）
+params = {'q': search_query}
+response = requests.get(url, params=params)
 
 # 确保请求成功
 if response.status_code == 200:
-    # 输出网页的前1000个字符，查看网页的 HTML 内容
-    print("网页内容的前1000个字符：")
-    print(response.text[:1000])
-
     # 解析网页
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -37,13 +35,13 @@ if response.status_code == 200:
     links = soup.find_all('a')
 
     # 输出所有链接和链接文本
-    print("\n所有链接：")
+    print("所有链接：")
     for link in links:
         href = link.get('href')
         link_text = link.get_text()
         print("链接文本: {}, 链接地址: {}".format(link_text.strip(), href))
 
-    # 查找与 '翡翠台' 相关的链接（使用更宽松的匹配）
+    # 查找与 '翡翠台' 相关的链接
     related_links = [link.get('href') for link in links if link.get_text() and "翡翠台" in link.get_text()]
 
     # 输出找到的相关链接
@@ -55,6 +53,7 @@ if response.status_code == 200:
         print("\n没有找到与 '翡翠台' 相关的链接。")
 else:
     print("请求失败，状态码：{}".format(response.status_code))
+
 
 
 EOF
