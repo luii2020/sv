@@ -37,11 +37,11 @@ if response.status_code == 200:
         print("找到以下与 '翡翠台' 相关的链接：")
         for link in links:
             href = link.get('href')
-            print(f"链接: {href}")
+            print("链接: {}".format(href))  # 使用 str.format() 进行字符串格式化
     else:
         print("没有找到与 '翡翠台' 相关的链接。")
 else:
-    print(f"请求失败，状态码：{response.status_code}")
+    print("请求失败，状态码：{}".format(response.status_code))  # 使用 str.format()
 EOF
 
 # 执行抓取脚本
