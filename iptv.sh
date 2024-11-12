@@ -15,44 +15,71 @@ python3.5 -m pip install requests beautifulsoup4
 echo "创建抓取脚本 fetch_favorite_channel.py..."
 
 cat << 'EOF' > fetch_favorite_channel.py
-import requests
-from bs4 import BeautifulSoup
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
-# 搜索引擎 URL 和要搜索的关键字
+# 设置 Chrome 为无头模式
+chrome_options = Options()
+chrome_options.add_argument('--headless')  # 无头模式
+chrome_options.add_argument('--disable-gpu')  # 禁用GPU加速
+chrome_options.add_argument('--no-sandbox')  # 禁用沙盒模式
+
+# 创建浏览器对象
+driver = webdriver.Chrome(options=chrome_options)
+
+# 目标 URL
 url = "http://tonkiang.us/"
-search_query = "翡翠台"
 
-# 模拟 POST 请求进行搜索，表单字段为 'seerch'
-data = {'seerch': search_query}
-response = requests.post(url, data=data)
+try:
+    # 打开页面
+    driver.get(url)
+    time.sleep(3)  # 等待页面加载
 
-# 确保请求成功
-if response.status_code == 200:
-    # 解析网页
-    soup = BeautifulSoup(response.text, 'html.parser')
+    # 提取第一页内容
+    print("抓取第一页内容...")
 
-    # 查找所有 <a> 标签（超链接）
-    links = soup.find_all('a')
+    # 遍历分页（假设有多页）
+    page_num = 1
+    while True:
+        print(f"正在抓取第 {page_num} 页...")
+        
+        # 获取页面中的所有链接
+        links = driver.find_elements(By.TAG_NAME, 'a')
+        found_links = []
+        
+        for link in links:
+            href = link.get_attribute('href')
+            text = link.text
+            # 如果链接文本包含 "翡翠台"
+            if href and "翡翠台" in text:
+                found_links.append(href)
+        
+        if found_links:
+            print("找到以下与 '翡翠台' 相关的链接：")
+            for link in found_links:
+                print(link)
+        else:
+            print(f"在第 {page_num} 页没有找到 '翡翠台' 相关链接。")
+        
+        # 判断是否有下一页
+        try:
+            next_page_link = driver.find_element(By.LINK_TEXT, str(page_num + 1))
+            next_page_link.click()  # 点击下一页
+            page_num += 1
+            time.sleep(3)  # 等待新页面加载
+        except Exception as e:
+            print("没有更多页面了，抓取完成。")
+            break
+except Exception as e:
+    print(f"发生错误: {e}")
+finally:
+    # 关闭浏览器
+    driver.quit()
 
-    # 输出所有链接和链接文本
-    print("所有链接：")
-    for link in links:
-        href = link.get('href')
-        link_text = link.get_text()
-        print("链接文本: {}, 链接地址: {}".format(link_text.strip(), href))
+print("任务完成！")
 
-    # 查找与 '翡翠台' 相关的链接
-    related_links = [link.get('href') for link in links if link.get_text() and "翡翠台" in link.get_text()]
-
-    # 输出找到的相关链接
-    if related_links:
-        print("\n找到以下与 '翡翠台' 相关的链接：")
-        for link in related_links:
-            print(link)
-    else:
-        print("\n没有找到与 '翡翠台' 相关的链接。")
-else:
-    print("请求失败，状态码：{}".format(response.status_code))
 
 
 EOF
