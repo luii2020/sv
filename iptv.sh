@@ -30,18 +30,28 @@ if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
 
     # 查找所有 <a> 标签（超链接）
-    links = soup.find_all('a', string=lambda text: text and "翡翠台" in text)
+    links = soup.find_all('a')
 
-    # 输出找到的链接
-    if links:
-        print("找到以下与 '翡翠台' 相关的链接：")
-        for link in links:
-            href = link.get('href')
-            print("链接: {}".format(href))  # 使用 str.format() 进行字符串格式化
+    # 输出所有链接和链接内容（调试输出）
+    print("所有链接：")
+    for link in links:
+        href = link.get('href')
+        link_text = link.get_text()
+        print("链接文本: {}, 链接地址: {}".format(link_text, href))
+
+    # 查找与 '翡翠台' 相关的链接
+    related_links = [link.get('href') for link in links if link.get_text() and "翡翠台" in link.get_text()]
+
+    # 输出找到的相关链接
+    if related_links:
+        print("\n找到以下与 '翡翠台' 相关的链接：")
+        for link in related_links:
+            print(link)
     else:
-        print("没有找到与 '翡翠台' 相关的链接。")
+        print("\n没有找到与 '翡翠台' 相关的链接。")
 else:
-    print("请求失败，状态码：{}".format(response.status_code))  # 使用 str.format()
+    print("请求失败，状态码：{}".format(response.status_code))
+
 EOF
 
 # 执行抓取脚本
